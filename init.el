@@ -4,7 +4,6 @@
 (setq org-export-html-validation-link nil)
 
 ;;; miscellaneous options
-(toggle-frame-fullscreen)
 (scroll-bar-mode 0)
 (blink-cursor-mode 0)
 (setq initial-scratch-message "")
