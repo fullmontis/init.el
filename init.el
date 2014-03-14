@@ -11,6 +11,17 @@
 (setq inhibit-startup-message t)
 (setq visible-bell t)
 
+
+;;; Setup sh in windows
+(if (eq system-type 'windows-nt)
+(setq explicit-shell-file-name "C:/Program Files (x86)/Git/bin/sh.exe")
+(setq shell-file-name "sh")
+(setq explicit-sh.exe-args '("--login" "-i"))
+(setenv "SHELL" shell-file-name)
+(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+)
+
+
 ;;; add folder from where load custom lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
