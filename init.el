@@ -1,6 +1,15 @@
+;;; org-mode options
 (setq org-log-done 'time)
 (setq org-directory "C:\\Users\\ANDREA\\Dropbox\\org")
 (setq org-export-html-validation-link nil)
+
+;;; miscellaneous options
+(toggle-frame-fullscreen)
+(scroll-bar-mode 0)
+(blink-cursor-mode 0)
+(setq initial-scratch-message "")
+(setq inhibit-startup-message t)
+(setq visible-bell t)
 
 ;;; add folder from where load custom lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp/")
@@ -64,7 +73,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (tango-dark))))
+ '(custom-enabled-themes (quote (tango-dark)))
+ '(send-mail-function (quote smtpmail-send-it))
+ '(smtpmail-smtp-server "smtp.gmail.com")
+ '(smtpmail-smtp-service 25))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
