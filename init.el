@@ -14,12 +14,15 @@
 
 ;;; Setup sh in windows
 (if (eq system-type 'windows-nt)
-(setq explicit-shell-file-name "C:/Program Files (x86)/Git/bin/sh.exe")
-(setq shell-file-name "sh")
-(setq explicit-sh.exe-args '("--login" "-i"))
-(setenv "SHELL" shell-file-name)
-(add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
-)
+    (let () 
+      (setq explicit-shell-file-name "C:/Program Files (x86)/Git/bin/sh.exe")
+      (setq shell-file-name "sh")
+      (setq explicit-sh.exe-args '("--login" "-i"))
+      (setenv "SHELL" shell-file-name)
+      (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
+      )
+  )
+(global-set-key [f1] 'shell)
 
 
 ;;; add folder from where load custom lisp files
