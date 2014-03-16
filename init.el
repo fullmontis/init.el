@@ -102,3 +102,6 @@
 
 ;;; Custom Keybindings
 (global-set-key (kbd "C-x C-j") 'emmet-expand-line)
+
+;;; Auto refresh directories in dired mode
+(add-hook 'dired-mode-hook 'auto-revert-mode)
