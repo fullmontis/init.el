@@ -10,6 +10,9 @@
 (setq inhibit-startup-message t)
 (setq visible-bell t)
 
+;;; Remove toolbar and menu
+(menu-bar-mode 0)
+(tool-bar-mode 0)
 
 ;;; Setup sh in windows
 (if (eq system-type 'windows-nt)
@@ -66,10 +69,6 @@
 
 ;;; Needed to be able to insert ascii characters in decimal with C-q
 (setq read-quoted-char-radix 10)
-
-;;; Remove toolbar and menu
-(menu-bar-mode 0)
-(tool-bar-mode 0)
 
 ;;; Load default directory from dropbox
 (setq default-directory "C:\\Users\\ANDREA\\Dropbox\\org")
