@@ -1,3 +1,7 @@
+;;; Personal info for emails
+(setq user-full-name "Andrea Montagna")
+(setq user-mail-address "fullmontis@gmail.com")
+
 ;;; org-mode options
 (setq org-log-done 'time)
 (setq org-directory "C:\\Users\\ANDREA\\Dropbox\\org")
@@ -104,3 +108,7 @@
 
 ;;; Auto refresh directories in dired mode
 (add-hook 'dired-mode-hook 'auto-revert-mode)
+
+;;; inrease/decrease font size
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
