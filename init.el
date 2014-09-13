@@ -218,3 +218,28 @@
 (defun my-open-init ()
   (interactive)
   (find-file "C:\\Users\\ANDREA\\AppData\\Roaming\\.emacs.d\\init.el"))
+
+;;; Haskell mode
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
+;;; Some custom functions for adding Javascirpt functions faster
+(defun andrea-js-insert-function (name arguments)
+  "Adds simple function constructor for JS"
+  (interactive (list (read-string "Function name: ")
+		     (read-string "Arguments: ")))
+  (let ((parleft  (if (string-equal arguments "") "(" "( "))
+	(parright (if (string-equal arguments "") ")" " )")))
+    (insert (concat "function " name  parleft  arguments parright " {}"))
+    (andrea-indent-brackets)))
+
+(defun andrea-js-insert-array-iterator (var array)
+  "Inserts a JS for loop that loops through all the existing 
+elements in array"
+  (interactive (list (read-string "Var name (default i): ")
+		     (read-string "Array: ")))
+  (let ((var (if (string-equal var "") "i" var)))
+    (insert "for( var " var "=0; " var "<" array ".length; " var "++ ) {}")
+    (andrea-indent-brackets)))
+
+(define-key js2-mode-map (kbd "C-,") 'andrea-js-insert-array-iterator)
+(define-key js2-mode-map (kbd "C-ò") 'andrea-js-insert-function)
