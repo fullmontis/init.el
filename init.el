@@ -1,8 +1,3 @@
-;;; org-mode options
-(setq org-log-done 'time)
-(setq org-directory "C:\\Users\\ANDREA\\Dropbox\\org")
-(setq org-export-html-validation-link nil)
-
 ;;; miscellaneous options
 (scroll-bar-mode 0)
 (blink-cursor-mode 0)
@@ -30,37 +25,6 @@
 
 ;;; add folder from where load custom lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-
-;;; Add an OPENED status to TODO stuff in org
-;;; (still buggy as hell)
-(defcustom org-opened-string "OPENED:"
-  "String used as the prefix for timestamps logging opening a TODO entry"
-  :group 'org-keywords
-  :type 'string)
-
-(defun my-org-insert-opened ()
-  "Insert an inactive timestamp with opened state to current element"
-  (if (string= "TODO" org-state)
-      (save-excursion
-	(org-back-to-heading)
-	(org-show-entry)
-	(end-of-line)
-	(if (looking-at "\\<OPENED: *\\[\\([^]]+\\)\\]")
-	    (let () (next-line 1)
-	    (kill-whole-line)
-	    (previous-line 1)
-	    (end-of-line)
-	    )
-	  )
-	(org-insert-time-stamp (current-time) t t "\n OPENED: ")
-	(indent-for-tab-command)
-	)
-    )
-)
-(add-hook 'org-after-todo-state-change-hook 'my-org-insert-opened)
-
-;;; Run auto-fill-mode when entering org mode
-(add-hook 'org-mode-hook 'auto-fill-mode)
 
 ;;; Set default package repositories
 (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
@@ -186,6 +150,68 @@
 (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
 (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
 
+;;; misc shortcuts
+(global-set-key (kbd "<f8>") 'calc)
+(global-set-key (kbd "<f1>") 'shell)
+(global-set-key (kbd "<f12>") 
+  (lambda()(interactive)                               
+    (switch-to-buffer (get-buffer-create "*scratch*"))))
+(global-set-key (kbd "C-<home>") 'beginning-of-buffer)
+(global-set-key (kbd "C-<end>") 'end-of-buffer)
+
+;;; Use nxml for html
+(fset 'html-mode 'nxml-mode)
+
+;;; open init file
+(defun my-open-init ()
+  (interactive)
+  (find-file "~\\.emacs.d\\init.el"))
+
+;;; Haskell mode
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
+;;; Automatically load follow-mode
+(follow-mode 1)
+
+;;; expand-region
+(require 'expand-region)
+(global-set-key (kbd "C-M-'") 'er/expand-region)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; File editing
+(defun andrea-move-line-above ()
+  "Moves current line above the upper one"
+  (interactive)
+  (let ((point-from-start (- (point) (line-beginning-position))))
+    (kill-whole-line)
+    (ignore-errors (previous-line))
+    (move-beginning-of-line nil)
+    (yank)
+    (previous-line)
+    (goto-char (+ (line-beginning-position) point-from-start))))
+
+(defun andrea-move-line-below ()
+  "Moves current line below the lower one"
+  (interactive)
+  (let ((point-from-start (- (point) (line-beginning-position))))
+    (kill-whole-line)
+    (ignore-errors (next-line))
+    (move-beginning-of-line nil)
+    (yank)
+    (previous-line)
+    (goto-char (+ (line-beginning-position) point-from-start))))
+
+(global-set-key (kbd "M-<up>")   'andrea-move-line-above)
+(global-set-key (kbd "M-<down>") 'andrea-move-line-below)
+
+(global-set-key (kbd "C-'") '(lambda () (interactive) 
+			       (move-end-of-line nil)
+			       (newline-and-indent)))
+(global-set-key (kbd "M-'") '(lambda () (interactive)
+			       (previous-line)
+			       (move-end-of-line nil)
+			       (newline-and-indent)))
+
 ;;; Programming utility keystrokes
 (defun andrea-indent-brackets ()
   "Automatically in"
@@ -199,30 +225,16 @@
 
 (global-set-key (kbd "C-.") 'andrea-indent-brackets)
 
-;;; misc shortcuts
-(global-set-key (kbd "<f8>") 'calc)
-(global-set-key (kbd "<f1>") 'shell)
-(global-set-key (kbd "<f12>") 
-  (lambda()(interactive)                               
-    (switch-to-buffer (get-buffer-create "*scratch*"))))
-(global-set-key (kbd "C-<home>") 'beginning-of-buffer)
-(global-set-key (kbd "C-<end>") 'end-of-buffer)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Elisp
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
-;;; Use nxml for html
-(fset 'html-mode 'nxml-mode)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Some custom functions for javascript
 ;;; use js2-mode for javascript files
 (fset 'javascript-mode 'js2-mode)
+(require 'js2-mode)
 
-;;; open init file
-(defun my-open-init ()
-  (interactive)
-  (find-file "C:\\Users\\ANDREA\\AppData\\Roaming\\.emacs.d\\init.el"))
-
-;;; Haskell mode
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-
-;;; Some custom functions for adding Javascirpt functions faster
 (defun andrea-js-insert-function (name arguments)
   "Adds simple function constructor for JS"
   (interactive (list (read-string "Function name: ")
@@ -243,3 +255,43 @@ elements in array"
 
 (define-key js2-mode-map (kbd "C-,") 'andrea-js-insert-array-iterator)
 (define-key js2-mode-map (kbd "C-ò") 'andrea-js-insert-function)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Org-mode
+
+;;; org-mode options
+(setq org-log-done 'time)
+(setq org-directory "C:\\Users\\ANDREA\\Dropbox\\org")
+(setq org-export-html-validation-link nil)
+
+;;; Add an OPENED status to TODO stuff in org
+;;; (still buggy as hell)
+(defcustom org-opened-string "OPENED:"
+  "String used as the prefix for timestamps logging opening a TODO entry"
+  :group 'org-keywords
+  :type 'string)
+
+(defun my-org-insert-opened ()
+  "Insert an inactive timestamp with opened state to current element"
+  (if (string= "TODO" org-state)
+      (save-excursion
+	(org-back-to-heading)
+	(org-show-entry)
+	(end-of-line)
+	(if (looking-at "\\<OPENED: *\\[\\([^]]+\\)\\]")
+	    (let () (next-line 1)
+	    (kill-whole-line)
+	    (previous-line 1)
+	    (end-of-line)
+	    )
+	  )
+	(org-insert-time-stamp (current-time) t t "\n OPENED: ")
+	(indent-for-tab-command)
+	)
+    )
+)
+(add-hook 'org-after-todo-state-change-hook 'my-org-insert-opened)
+
+;;; Run auto-fill-mode when entering org mode
+(add-hook 'org-mode-hook 'auto-fill-mode)
+
