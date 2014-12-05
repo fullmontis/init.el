@@ -1,3 +1,6 @@
+(package-initialize)
+
+
 ;;; miscellaneous options
 (scroll-bar-mode 0)
 (blink-cursor-mode 0)
@@ -225,6 +228,36 @@
 
 (global-set-key (kbd "C-.") 'andrea-indent-brackets)
 
+;;; A function to create a TOC and html body for an article 
+;; (defun my-make-toc (from to)
+;;   (interactive (if (use-region-p)
+;; 		   (list (region-beginning) (region-end))
+;; 		 (list (point-min) (point-max))))
+;;   (let ((article  (buffer-substring-no-properties from to)))
+;;     (switch-to-buffer (get-buffer-create (concat (buffer-name (current-buffer)) ".htm")))
+;;     (insert article)
+;;     (goto-char (point-max))
+;;     (search-backward "** ")
+;;     (delete-forward-char)(delete-forward-char)(delete-forward-char)
+;;     (let ((title (buffer-substring-no-properties (point) (line-end-position)))
+;; 	  (title-no-spaces (replace-regexp-in-string " " "-" title)))
+;;       (insert (concat "<a name=\"" title-no-spaces "\"></a>"))
+;;       (goto-char (point-min))
+;;       (insert (concat "<a href=\"#" title-no-spaces "\">" title "</a><br>"))
+;;       (goto-char (point-max)))))
+
+(defun my-make-toc ()
+  (interactive)
+  (goto-char (point-max))
+  (search-backward "** ")
+  (delete-char 3)
+  (let* ((title (buffer-substring-no-properties (point) (line-end-position)))
+	(title-no-spaces (replace-regexp-in-string " " "-" title)))
+    (message title)
+    (insert (concat "<a name=\"" title-no-spaces "\"></a>"))
+    (goto-char (point-min))
+    (insert (concat "<a href=\"#" title-no-spaces "\">" title "</a><br>"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Elisp
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
@@ -295,3 +328,5 @@ elements in array"
 ;;; Run auto-fill-mode when entering org mode
 (add-hook 'org-mode-hook 'auto-fill-mode)
 
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
