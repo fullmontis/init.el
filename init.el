@@ -124,10 +124,29 @@
     (insert "- Luna :: ")(newline)
     (insert "- Cond. Fisiche :: ")(newline)
     (insert "- Cond. Mentali :: ")(newline)
+    (insert "- Sung Breathing :: ")(newline)
     (insert "- 5 Riti Tibetani :: ")(newline)
     (insert "- LBRP :: ")(newline)
     (insert "- Middle Pillar :: ")(newline)
     (insert "- Kun lun :: ")
+    (goto-char my-point)
+    )
+  )
+
+(defun andrea-add-exercise-entry ()
+  "Insert journaling entry for exercise at the end of the current file."
+  (interactive)
+  (let (my-point)
+    (goto-char (point-max))
+    (insert "* ")
+    (andrea-insert-timestamp)(newline)
+    (insert "- Pushup :: ") (setq my-point (point)) (newline)
+    (insert "- Squat :: ") (newline)
+    (insert "- Pullup :: ")(newline)
+    (insert "- Leg raise :: ")(newline)
+    (insert "- Bridge :: ")(newline)
+    (insert "- Handstand :: ")(newline)
+    (insert "- Note :: ")(newline)
     (goto-char my-point)
     )
   )
@@ -149,9 +168,43 @@
   )
 )
 
+(defun andrea-open-exercise-journal ()
+  "Automatically save current buffer, open journal and add new entry"
+  (interactive)
+  (let ()
+    (save-buffer)
+    (find-file "c:/Users/ANDREA/Dropbox/org/allenamento.org")
+    (andrea-add-exercise-entry)
+  )
+)
+
+(defun andrea-open-dream-journal ()
+  "Automatically save current buffer, open dream journal and add new entry"
+  (interactive)
+  (let ()
+    (save-buffer)
+    (find-file "c:/Users/ANDREA/Dropbox/org/sogni.org")
+    (andrea-add-journal-entry)
+  )
+)
+
+(defun andrea-open-writepad ()
+  "Automatically save current buffer, open writepad and go to the end of the file"
+  (interactive)
+  (let ()
+    (save-buffer)
+    (find-file "c:/Users/ANDREA/Dropbox/org/writepad.org")
+    (goto-char (point-max))
+    (org-timer-start)
+  )
+)
+
 (global-set-key (kbd "C-c M-m") 'andrea-add-meditation-entry)
+(global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
 (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
 (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
+(global-set-key (kbd "C-c M-d") 'andrea-open-dream-journal)
+(global-set-key (kbd "C-c M-w") 'andrea-open-writepad)
 
 ;;; misc shortcuts
 (global-set-key (kbd "<f8>") 'calc)
@@ -179,6 +232,9 @@
 ;;; expand-region
 (require 'expand-region)
 (global-set-key (kbd "C-M-'") 'er/expand-region)
+
+;;; set default timer for org-timer
+(setq org-timer-default-timer 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; File editing
