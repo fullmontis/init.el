@@ -1,5 +1,7 @@
 (package-initialize)
 
+;;; Start Emacs server
+(server-start)
 
 ;;; miscellaneous options
 (scroll-bar-mode 0)
@@ -94,6 +96,25 @@
 ;;; Search and replace, no query
 (global-set-key (kbd "C-%") 'replace-string)
 
+;;; Lunar phase functions for journaling purposes
+(require 'calendar)
+
+(defun my-lunar-phase-date (date)
+  "Returns lunar phase on given date"
+  (interactive)
+  (let ((my-lunar-phase (lunar-phase (lunar-index date))))
+    (let ((my-lunar-phase-date (car my-lunar-phase))
+	  (my-lunar-phase-last (nth 2 my-lunar-phase))
+	  (my-lunar-names-normal '("Crescente" "Gibbosa crescente" "Gibbosa calante" "Calante"))
+	  (my-lunar-names-change '("Nuova" "Primo quarto" "Piena" "Ultimo quarto")))
+      (if (equal my-lunar-phase-last (calendar-current-date))
+	  (nth my-lunar-phase-last my-lunar-names-change)
+	(nth my-lunar-phase-last my-lunar-names-normal)
+	))))
+
+(defun my-lunar-phase-today ()
+  (interactive)
+  (my-lunar-phase-date (calendar-current-date)))
 
 ;;; Journaling function
 (defun andrea-insert-timestamp-with-time ()
@@ -121,13 +142,13 @@
     (insert "- Carta :: ")(newline)
     (insert "- I Ching :: ")(newline)
     (insert "- Tempo :: ")(newline)
-    (insert "- Luna :: ")(newline)
+    (insert "- Luna :: ")(insert (my-lunar-phase-today))(newline)
     (insert "- Cond. Fisiche :: ")(newline)
     (insert "- Cond. Mentali :: ")(newline)
-    (insert "- Sung Breathing :: ")(newline)
     (insert "- 5 Riti Tibetani :: ")(newline)
     (insert "- LBRP :: ")(newline)
     (insert "- Middle Pillar :: ")(newline)
+    (insert "- Sung Breathing :: ")(newline)
     (insert "- Kun lun :: ")
     (goto-char my-point)
     )
