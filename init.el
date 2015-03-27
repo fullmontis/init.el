@@ -96,8 +96,14 @@
 ;;; Search and replace, no query
 (global-set-key (kbd "C-%") 'replace-string)
 
+;;; Show date on mode bar
+(display-time-mode 1)
+(custom-set-variables '(display-time-24hr-format 1)
+		      '(display-time-day-and-date 1))
+
 ;;; Lunar phase functions for journaling purposes
 (require 'calendar)
+(require 'lunar)
 
 (defun my-lunar-phase-date (date)
   "Returns lunar phase on given date"
