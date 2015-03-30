@@ -104,23 +104,26 @@
 ;;; Lunar phase functions for journaling purposes
 (require 'calendar)
 (require 'lunar)
-
-(defun my-lunar-phase-date (date)
-  "Returns lunar phase on given date"
-  (interactive)
-  (let ((my-lunar-phase (lunar-phase (lunar-index date))))
-    (let ((my-lunar-phase-date (car my-lunar-phase))
-	  (my-lunar-phase-last (nth 2 my-lunar-phase))
-	  (my-lunar-names-normal '("Crescente" "Gibbosa crescente" "Gibbosa calante" "Calante"))
-	  (my-lunar-names-change '("Nuova" "Primo quarto" "Piena" "Ultimo quarto")))
-      (if (equal my-lunar-phase-last (calendar-current-date))
-	  (nth my-lunar-phase-last my-lunar-names-change)
-	(nth my-lunar-phase-last my-lunar-names-normal)
-	))))
+(require 'cal-dst)
 
 (defun my-lunar-phase-today ()
   (interactive)
-  (my-lunar-phase-date (calendar-current-date)))
+  (let* ((date-today (calendar-current-date))
+       (index (lunar-index date-today))
+       (phase-date (car (lunar-phase index)))
+       (phase 0)
+       (exact 0)
+       (lunar-names '("Nuova" "Crescente" "Primo quarto" "Gibbosa crescente"
+		     "Piena" "Gibbosa calante" "Ultimo quarto" "Calante")))
+  (while (calendar-date-compare (list phase-date) (list date-today))
+    (setq phase (+ phase 1))
+    (setq phase-date (car (lunar-phase (+ index phase)))))
+  (setq phase (- phase 1))
+  (setq phase-date (car (lunar-phase (+ index (- phase 1)))))
+  (if (equal phase-date date-today)
+      (setq exact 0)
+    (setq exact 1))
+  (nth (+ exact (* phase 2)) lunar-names)))
 
 ;;; Journaling function
 (defun andrea-insert-timestamp-with-time ()
