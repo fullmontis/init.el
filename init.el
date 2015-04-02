@@ -306,17 +306,17 @@
 			       (newline-and-indent)))
 
 ;;; Programming utility keystrokes
-(defun andrea-indent-brackets ()
-  "Automatically in"
+(defun andrea-indent-curly-brackets ()
+  "Automatically insert curly brackets, and format them"
   (interactive)
-  (progn
-    (backward-char)
-    (newline)
-    (newline-and-indent)
-    (previous-line)
-    (indent-for-tab-command)))
+  (insert "{")
+  (newline)(newline)
+  (insert "}")
+  (indent-for-tab-command)
+  (previous-line)
+  (indent-for-tab-command))
 
-(global-set-key (kbd "C-.") 'andrea-indent-brackets)
+(global-set-key (kbd "C-.") 'andrea-indent-curly-brackets)
 
 ;;; A function to create a TOC and html body for an article 
 ;; (defun my-make-toc (from to)
