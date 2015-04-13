@@ -1,4 +1,8 @@
-(package-initialize)
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (package-initialize)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  )
 
 ;;; Start Emacs server
 (server-start)
@@ -17,6 +21,10 @@
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 
+;; Remove annoying closing of window when pressing C-z by mistake
+;; and use it for undo instead
+(global-set-key (kbd "C-z") 'undo)
+
 ;;; Setup sh in windows
 (if (eq system-type 'windows-nt)
     (let () 
@@ -32,10 +40,10 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;;; Set default package repositories
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-			 ))
+;; (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
+;;                          ("gnu" . "http://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
+;; 			 ))
 
 ;;; Start Evil mode by default
 ; (package-initialize)
@@ -97,9 +105,9 @@
 (global-set-key (kbd "C-%") 'replace-string)
 
 ;;; Show date on mode bar
-(display-time-mode 1)
-(custom-set-variables '(display-time-24hr-format 1)
-		      '(display-time-day-and-date 1))
+; (display-time-mode 1)
+;; (custom-set-variables '(display-time-24hr-format 1)
+;; 		      '(display-time-day-and-date 1))
 
 ;;; Lunar phase functions for journaling purposes
 (require 'calendar)
@@ -158,7 +166,6 @@
     (insert "- LBRP :: ")(newline)
     (insert "- Middle Pillar :: ")(newline)
     (insert "- Sung Breathing :: ")(newline)
-    (insert "- Kun lun :: ")
     (goto-char my-point)
     )
   )
@@ -420,3 +427,6 @@ elements in array"
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+
+;;; Initialize Haxe-mode
+(require 'haxe-mode)
