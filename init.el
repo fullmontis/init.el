@@ -52,13 +52,26 @@
 ;;; Needed to be able to insert ascii characters in decimal with C-q
 (setq read-quoted-char-radix 10)
 
+;;; Org mode
+(require 'org-install)
+(require 'org-habit)
+
 ;;; Load default directory from dropbox
-(setq default-directory "C:\\Users\\ANDREA\\Dropbox\\org")
-(cd "C:\\Users\\ANDREA\\Dropbox\\org")
+(setq default-directory "C:\\Users\\ANDREA\\Dropbox\\org\\")
+(cd default-directory)
+
+;; set org agenda files
+(setq org-agenda-files (list (concat default-directory "agenda\\agenda.org")))
+
+;;; Org mode keybindings.
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
 
 ;;; Set to open the meditation file on startup
 (setq initial-buffer-choice 
-      "C:\\Users\\ANDREA\\Dropbox\\org\\meditazioni.org")
+      (concat default-directory "meditazioni.org"))
 (setq initial-scratch-message "")
 
 ;;; Set emacs to show column number by default
