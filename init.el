@@ -69,9 +69,9 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-;;; Set to open the meditation file on startup
-(setq initial-buffer-choice 
-      (concat default-directory "meditazioni.org"))
+;;; Set to open and empty scratch file at the beginning
+;;(setq initial-buffer-choice 
+;;      (concat default-directory "meditazioni.org"))
 (setq initial-scratch-message "")
 
 ;;; Set emacs to show column number by default
@@ -183,6 +183,12 @@
     )
   )
 
+(defun andrea-open-meditation-journal () 
+  "Open meditative journal and insert new entry at the end"
+  (interactive)
+  (find-file "c:/Users/ANDREA/Dropbox/org/meditazioni.org")
+  (andrea-add-meditation-entry))
+
 (defun andrea-add-exercise-entry ()
   "Insert journaling entry for exercise at the end of the current file."
   (interactive)
@@ -211,11 +217,8 @@
 (defun andrea-open-journal ()
   "Automatically save current buffer, open journal and add new entry"
   (interactive)
-  (let ()
-    (save-buffer)
-    (find-file "c:/Users/ANDREA/Dropbox/org/giornale.org")
-    (andrea-add-journal-entry)
-  )
+  (find-file "c:/Users/ANDREA/Dropbox/org/giornale.org")
+  (andrea-add-journal-entry)
 )
 
 (defun andrea-open-exercise-journal ()
@@ -249,7 +252,7 @@
   )
 )
 
-(global-set-key (kbd "C-c M-m") 'andrea-add-meditation-entry)
+(global-set-key (kbd "C-c M-m") 'andrea-open-meditation-journal)
 (global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
 (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
 (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
@@ -407,33 +410,33 @@ elements in array"
 (setq org-directory "C:\\Users\\ANDREA\\Dropbox\\org")
 (setq org-export-html-validation-link nil)
 
-;;; Add an OPENED status to TODO stuff in org
-;;; (still buggy as hell)
-(defcustom org-opened-string "OPENED:"
-  "String used as the prefix for timestamps logging opening a TODO entry"
-  :group 'org-keywords
-  :type 'string)
+;; ;;; Add an OPENED status to TODO stuff in org
+;; ;;; (still buggy as hell)
+;; (defcustom org-opened-string "OPENED:"
+;;   "String used as the prefix for timestamps logging opening a TODO entry"
+;;   :group 'org-keywords
+;;   :type 'string)
 
-(defun my-org-insert-opened ()
-  "Insert an inactive timestamp with opened state to current element"
-  (if (string= "TODO" org-state)
-      (save-excursion
-	(org-back-to-heading)
-	(org-show-entry)
-	(end-of-line)
-	(if (looking-at "\\<OPENED: *\\[\\([^]]+\\)\\]")
-	    (let () (next-line 1)
-	    (kill-whole-line)
-	    (previous-line 1)
-	    (end-of-line)
-	    )
-	  )
-	(org-insert-time-stamp (current-time) t t "\n OPENED: ")
-	(indent-for-tab-command)
-	)
-    )
-)
-(add-hook 'org-after-todo-state-change-hook 'my-org-insert-opened)
+;; (defun my-org-insert-opened ()
+;;   "Insert an inactive timestamp with opened state to current element"
+;;   (if (string= "TODO" org-state)
+;;       (save-excursion
+;; 	(org-back-to-heading)
+;; 	(org-show-entry)
+;; 	(end-of-line)
+;; 	(if (looking-at "\\<OPENED: *\\[\\([^]]+\\)\\]")
+;; 	    (let () (next-line 1)
+;; 	    (kill-whole-line)
+;; 	    (previous-line 1)
+;; 	    (end-of-line)
+;; 	    )
+;; 	  )
+;; 	(org-insert-time-stamp (current-time) t t "\n OPENED: ")
+;; 	(indent-for-tab-command)
+;; 	)
+;;     )
+;; )
+;; (add-hook 'org-after-todo-state-change-hook 'my-org-insert-opened)
 
 ;;; Run auto-fill-mode when entering org mode
 (add-hook 'org-mode-hook 'auto-fill-mode)
