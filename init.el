@@ -7,6 +7,9 @@
 ;;; Start Emacs server
 (server-start)
 
+;;; Create key binding for auto fill mode
+(global-set-key (kbd "C-c q") 'auto-fill-mode)
+
 ;;; miscellaneous options
 (scroll-bar-mode 0)
 (blink-cursor-mode 0)
