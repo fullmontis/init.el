@@ -102,7 +102,7 @@
 (require 'screenwriter)
 
 ;; Calendar function
-(load "calendarpage.el")
+;; (load "calendarpage.el")
 
 ;;; save all backups in one folder
 (setq backup-directory-alist '(("."."~/.emacs.d/saves")))
@@ -179,9 +179,8 @@
     (insert "- Cond. Fisiche :: ")(newline)
     (insert "- Cond. Mentali :: ")(newline)
     (insert "- 5 Riti Tibetani :: ")(newline)
-    (insert "- LBRP :: ")(newline)
-    (insert "- Middle Pillar :: ")(newline)
-    (insert "- Sung Breathing :: ")(newline)
+    (insert "- Riti effettuati :: ")(newline)
+    (insert "- Sensazioni :: ")(newline)
     (goto-char my-point)
     )
   )
@@ -224,6 +223,12 @@
   (andrea-add-journal-entry)
 )
 
+(defun andrea-open-earnings-journal ()
+  (interactive)
+  (find-file "c:/Users/ANDREA/Dropbox/org/guadagni.org")
+  (andrea-add-journal-entry)
+)
+
 (defun andrea-open-exercise-journal ()
   "Automatically save current buffer, open journal and add new entry"
   (interactive)
@@ -256,6 +261,7 @@
 )
 
 (global-set-key (kbd "C-c M-m") 'andrea-open-meditation-journal)
+(global-set-key (kbd "C-c M-g") 'andrea-open-earnings-journal)
 (global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
 (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
 (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
