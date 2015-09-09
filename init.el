@@ -223,6 +223,13 @@
   (andrea-add-journal-entry)
 )
 
+(defun andrea-open-writing-journal ()
+  "Automatically save current buffer, open journal and add new entry"
+  (interactive)
+  (find-file "c:/Users/ANDREA/Dropbox/org/giornale_scrittura.org")
+  (andrea-add-journal-entry)
+)
+
 (defun andrea-open-earnings-journal ()
   (interactive)
   (find-file "c:/Users/ANDREA/Dropbox/org/guadagni.org")
@@ -262,6 +269,7 @@
 
 (global-set-key (kbd "C-c M-m") 'andrea-open-meditation-journal)
 (global-set-key (kbd "C-c M-g") 'andrea-open-earnings-journal)
+(global-set-key (kbd "C-c M-z") 'andrea-open-writing-journal)
 (global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
 (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
 (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
