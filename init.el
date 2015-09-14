@@ -149,7 +149,9 @@
     (setq exact 1))
   (nth (+ exact (* phase 2)) lunar-names)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Journaling function
+
 (defun andrea-insert-timestamp-with-time ()
   "Add current timestamp at point"
   (interactive)
@@ -198,12 +200,6 @@
     (goto-char (point-max))
     (insert "* ")
     (andrea-insert-timestamp)(newline)
-    (insert "- Pushup :: ") (setq my-point (point)) (newline)
-    (insert "- Squat :: ") (newline)
-    (insert "- Pullup :: ")(newline)
-    (insert "- Leg raise :: ")(newline)
-    (insert "- Bridge :: ")(newline)
-    (insert "- Handstand :: ")(newline)
     (insert "- Note :: ")(newline)
     (goto-char my-point)
     )
@@ -216,45 +212,88 @@
   (insert "* ")
   (andrea-insert-timestamp)(newline))
 
-(defun andrea-open-journal ()
-  "Automatically save current buffer, open journal and add new entry"
-  (interactive)
-  (find-file "c:/Users/ANDREA/Dropbox/org/giornale.org")
-  (andrea-add-journal-entry)
-)
+(defmacro defjournal (function-name 
+		      journal-path 
+		      key-combination 
+		      add-journal-function)
+	(list 'global-set-key (list 'kbd key-combination) (list 'defun function-name '() (list 'interactive) 
+	      (list 'find-file journal-path)
+	      (list add-journal-function))))
 
-(defun andrea-open-writing-journal ()
-  "Automatically save current buffer, open journal and add new entry"
-  (interactive)
-  (find-file "c:/Users/ANDREA/Dropbox/org/giornale_scrittura.org")
-  (andrea-add-journal-entry)
-)
+(defjournal andrea-open-meditation-journal
+  "c:/Users/ANDREA/Dropbox/org/meditazioni.org" 
+  "C-c M-m" 
+  andrea-add-meditation-entry)
 
-(defun andrea-open-earnings-journal ()
-  (interactive)
-  (find-file "c:/Users/ANDREA/Dropbox/org/guadagni.org")
-  (andrea-add-journal-entry)
-)
+(defjournal andrea-open-journal
+  "c:/Users/ANDREA/Dropbox/org/giornale.org" 
+  "C-c M-n" 
+  andrea-add-journal-entry)
 
-(defun andrea-open-exercise-journal ()
-  "Automatically save current buffer, open journal and add new entry"
-  (interactive)
-  (let ()
-    (save-buffer)
-    (find-file "c:/Users/ANDREA/Dropbox/org/allenamento.org")
-    (andrea-add-exercise-entry)
-  )
-)
+(defjournal andrea-open-writing-journal
+  "c:/Users/ANDREA/Dropbox/org/giornale_scrittura.org" 
+  "C-c M-z" 
+  andrea-add-journal-entry)
 
-(defun andrea-open-dream-journal ()
-  "Automatically save current buffer, open dream journal and add new entry"
-  (interactive)
-  (let ()
-    (save-buffer)
-    (find-file "c:/Users/ANDREA/Dropbox/org/sogni.org")
-    (andrea-add-journal-entry)
-  )
-)
+(defjournal andrea-open-earnings-journal
+  "c:/Users/ANDREA/Dropbox/org/guadagni.org" 
+  "C-c M-g" 
+  andrea-add-journal-entry)
+
+(defjournal andrea-open-dream-journal
+  "c:/Users/ANDREA/Dropbox/org/sogni.org" 
+  "C-c M-d" 
+  andrea-add-journal-entry)
+
+(defjournal andrea-open-exercise-journal
+  "c:/Users/ANDREA/Dropbox/org/sogni.org" 
+  "C-c M-e" 
+  andrea-add-journal-entry)
+
+(defjournal andrea-open-gratitude-journal
+  "c:/Users/ANDREA/Dropbox/org/gratitudine.org" 
+  "C-c M-r" 
+  andrea-add-journal-entry)
+
+;; (defun andrea-open-journal ()
+;;   "Automatically save current buffer, open journal and add new entry"
+;;   (interactive)
+;;   (find-file "c:/Users/ANDREA/Dropbox/org/giornale.org")
+;;   (andrea-add-journal-entry)
+;; )
+
+;; (defun andrea-open-writing-journal ()
+;;   "Automatically save current buffer, open journal and add new entry"
+;;   (interactive)
+;;   (find-file "c:/Users/ANDREA/Dropbox/org/giornale_scrittura.org")
+;;   (andrea-add-journal-entry)
+;; )
+
+;; (defun andrea-open-earnings-journal ()
+;;   (interactive)
+;;   (find-file "c:/Users/ANDREA/Dropbox/org/guadagni.org")
+;;   (andrea-add-journal-entry)
+;; )
+
+;; (defun andrea-open-exercise-journal ()
+;;   "Automatically save current buffer, open journal and add new entry"
+;;   (interactive)
+;;   (let ()
+;;     (save-buffer)
+;;     (find-file "c:/Users/ANDREA/Dropbox/org/allenamento.org")
+;;     (andrea-add-exercise-entry)
+;;   )
+;; )
+
+;; (defun andrea-open-dream-journal ()
+;;   "Automatically save current buffer, open dream journal and add new entry"
+;;   (interactive)
+;;   (let ()
+;;     (save-buffer)
+;;     (find-file "c:/Users/ANDREA/Dropbox/org/sogni.org")
+;;     (andrea-add-journal-entry)
+;;   )
+;; )
 
 (defun andrea-open-writepad ()
   "Automatically save current buffer, open writepad and go to the end of the file"
@@ -267,13 +306,13 @@
   )
 )
 
-(global-set-key (kbd "C-c M-m") 'andrea-open-meditation-journal)
-(global-set-key (kbd "C-c M-g") 'andrea-open-earnings-journal)
-(global-set-key (kbd "C-c M-z") 'andrea-open-writing-journal)
-(global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
-(global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
-(global-set-key (kbd "C-c M-n") 'andrea-open-journal)
-(global-set-key (kbd "C-c M-d") 'andrea-open-dream-journal)
+;; (global-set-key (kbd "C-c M-m") 'andrea-open-meditation-journal)
+;; (global-set-key (kbd "C-c M-g") 'andrea-open-earnings-journal)
+;; (global-set-key (kbd "C-c M-z") 'andrea-open-writing-journal)
+;; (global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
+;; (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
+;; (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
+;; (global-set-key (kbd "C-c M-d") 'andrea-open-dream-journal)
 (global-set-key (kbd "C-c M-w") 'andrea-open-writepad)
 
 ;;; misc shortcuts
