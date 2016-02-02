@@ -114,8 +114,9 @@
 (add-hook 'dired-mode-hook 'auto-revert-mode)
 
 ;;; inrease/decrease font size
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
+;;(global-set-key (kbd "C-+") 'text-scale-increase)
+;;(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "C--") 'undo)
 
 ;;; Search and replace, no query
 (global-set-key (kbd "C-%") 'replace-string)
@@ -246,7 +247,7 @@
   andrea-add-journal-entry)
 
 (defjournal andrea-open-exercise-journal
-  "c:/Users/ANDREA/Dropbox/org/sogni.org" 
+  "c:/Users/ANDREA/Dropbox/org/allenamento.org" 
   "C-c M-e" 
   andrea-add-journal-entry)
 
@@ -255,45 +256,40 @@
   "C-c M-r" 
   andrea-add-journal-entry)
 
-;; (defun andrea-open-journal ()
-;;   "Automatically save current buffer, open journal and add new entry"
-;;   (interactive)
-;;   (find-file "c:/Users/ANDREA/Dropbox/org/giornale.org")
-;;   (andrea-add-journal-entry)
-;; )
+(defjournal andrea-open-sexuality-journal
+  "c:/Users/ANDREA/Dropbox/org/sexuality.org" 
+  "C-c M-s" 
+  andrea-add-journal-entry)
 
-;; (defun andrea-open-writing-journal ()
-;;   "Automatically save current buffer, open journal and add new entry"
-;;   (interactive)
-;;   (find-file "c:/Users/ANDREA/Dropbox/org/giornale_scrittura.org")
-;;   (andrea-add-journal-entry)
-;; )
+(defjournal andrea-open-comedy-journal
+  "c:/Users/ANDREA/Dropbox/org/comedy.org" 
+  "C-c M-a" 
+  andrea-add-journal-entry)
 
-;; (defun andrea-open-earnings-journal ()
-;;   (interactive)
-;;   (find-file "c:/Users/ANDREA/Dropbox/org/guadagni.org")
-;;   (andrea-add-journal-entry)
-;; )
+(defjournal andrea-open-drawing-journal
+  "c:/Users/ANDREA/Dropbox/org/drawing.org" 
+  "C-c M-f" 
+  andrea-add-journal-entry)
 
-;; (defun andrea-open-exercise-journal ()
-;;   "Automatically save current buffer, open journal and add new entry"
-;;   (interactive)
-;;   (let ()
-;;     (save-buffer)
-;;     (find-file "c:/Users/ANDREA/Dropbox/org/allenamento.org")
-;;     (andrea-add-exercise-entry)
-;;   )
-;; )
+(defjournal andrea-open-wakeup-journal
+  "c:/Users/ANDREA/Dropbox/org/wakeup.org" 
+  "C-c M-k" 
+  andrea-add-journal-entry)
 
-;; (defun andrea-open-dream-journal ()
-;;   "Automatically save current buffer, open dream journal and add new entry"
-;;   (interactive)
-;;   (let ()
-;;     (save-buffer)
-;;     (find-file "c:/Users/ANDREA/Dropbox/org/sogni.org")
-;;     (andrea-add-journal-entry)
-;;   )
-;; )
+(defjournal andrea-open-ideas-journal
+  "c:/Users/ANDREA/Dropbox/org/ideas.org" 
+  "C-c M-i" 
+  andrea-add-journal-entry)
+
+(defjournal andrea-open-forgive-journal
+  "c:/Users/ANDREA/Dropbox/org/forgive.org" 
+  "C-c M-v" 
+  andrea-add-journal-entry)
+
+(defjournal andrea-open-morning-pages-journal
+  "c:/Users/ANDREA/Dropbox/org/morning_pages.org" 
+  "C-c M-p" 
+  andrea-add-journal-entry)
 
 (defun andrea-open-writepad ()
   "Automatically save current buffer, open writepad and go to the end of the file"
@@ -302,22 +298,13 @@
     (save-buffer)
     (find-file "c:/Users/ANDREA/Dropbox/org/writepad.org")
     (goto-char (point-max))
-    (org-timer-start)
-  )
-)
+    (org-timer-start)))
 
-;; (global-set-key (kbd "C-c M-m") 'andrea-open-meditation-journal)
-;; (global-set-key (kbd "C-c M-g") 'andrea-open-earnings-journal)
-;; (global-set-key (kbd "C-c M-z") 'andrea-open-writing-journal)
-;; (global-set-key (kbd "C-c M-e") 'andrea-open-exercise-journal)
-;; (global-set-key (kbd "C-c M-j") 'andrea-add-journal-entry)
-;; (global-set-key (kbd "C-c M-n") 'andrea-open-journal)
-;; (global-set-key (kbd "C-c M-d") 'andrea-open-dream-journal)
 (global-set-key (kbd "C-c M-w") 'andrea-open-writepad)
 
 ;;; misc shortcuts
 (global-set-key (kbd "<f8>") 'calc)
-(global-set-key (kbd "<f1>") 'shell)
+;;(global-set-key (kbd "<f1>") 'shell)
 (global-set-key (kbd "<f12>") 
   (lambda()(interactive)                               
     (switch-to-buffer (get-buffer-create "*scratch*"))))
@@ -344,6 +331,20 @@
 
 ;;; set default timer for org-timer
 (setq org-timer-default-timer 5)
+
+;;; Word count function
+
+(defun count-words-from-ampersand () 
+  (interactive)
+  (save-excursion
+    (let ((p (point))) 
+      (search-backward "&")
+      (message (number-to-string (count-words-region (point) p))))))
+
+(global-set-key (kbd "C-c M-c") 'count-words-from-ampersand)
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; File editing
