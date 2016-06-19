@@ -1,20 +1,57 @@
 (when (>= emacs-major-version 24)
   (require 'package)
+
+  (add-to-list 'package-archives
+	       '("melpa" . "http://melpa.milkbox.net/packages/") t)
+	       
+					; list the packages you want
+  (setq package-list '(js2-mode))
+  
+					; activate all the packages
+					; (in particular autoloads)
   (package-initialize)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  )
+
+					; fetch the list of packages available 
+  (unless package-archive-contents
+    (package-refresh-contents))
+  
+					; install the missing packages
+  (dolist (package package-list)
+    (unless (package-installed-p package)
+      (package-install package))))
+
+(if (eq system-type 'gnu/linux)
+    (setq my-workspace-path "/home/andrea/Dropbox/org/")
+  (setq my-workspace-path "C:\\Users\\ANDREA\\Dropbox\\org\\"))
 
 ;;; Start Emacs server
-(server-start)
+(require 'server)
+(or (server-running-p) (server-start))
 
 ;;; Create key binding for auto fill mode
 (global-set-key (kbd "C-c q") 'auto-fill-mode)
+
+;;; start gpg service
+
+(require 'epa-file)
+(epa-file-enable)
+
+;;; Set advice for creating directory when saving a new file if it
+;;; does not exist
+
+(defadvice find-file (before make-directory-maybe (filename &optional wildcards) activate)
+  "Create parent directory if not exists while visiting file."
+  (unless (file-exists-p filename)
+    (let ((dir (file-name-directory filename)))
+      (unless (file-exists-p dir)
+        (make-directory dir)))))
 
 ;;; miscellaneous options
 (scroll-bar-mode 0)
 (blink-cursor-mode 0)
 (setq initial-scratch-message "")
 (setq inhibit-startup-message t)
+(setq initial-major-mode 'text-mode)
 (setq visible-bell t)
 (fset 'yes-or-no-p 'y-or-n-p) 
 (set-fringe-mode '(0 . 1))
@@ -23,6 +60,9 @@
 ;;; Remove toolbar and menu
 (menu-bar-mode 0)
 (tool-bar-mode 0)
+
+;; set aliases for html mode
+(fset 'html-mode 'nxml-mode)
 
 ;; Remove annoying closing of window when pressing C-z by mistake
 ;; and use it for undo instead
@@ -59,12 +99,8 @@
 (require 'org-install)
 (require 'org-habit)
 
-;;; Load default directory from dropbox
-(setq default-directory "C:\\Users\\ANDREA\\Dropbox\\org\\")
-(cd default-directory)
-
 ;; set org agenda files
-(setq org-agenda-files (list (concat default-directory "agenda\\agenda.org")))
+(setq org-agenda-files (list (concat my-workspace-path "agenda\\agenda.org")))
 
 ;;; Org mode keybindings.
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -117,6 +153,7 @@
 ;;(global-set-key (kbd "C-+") 'text-scale-increase)
 ;;(global-set-key (kbd "C--") 'text-scale-decrease)
 (global-set-key (kbd "C--") 'undo)
+(set-face-attribute 'default nil :height 100)
 
 ;;; Search and replace, no query
 (global-set-key (kbd "C-%") 'replace-string)
@@ -191,7 +228,7 @@
 (defun andrea-open-meditation-journal () 
   "Open meditative journal and insert new entry at the end"
   (interactive)
-  (find-file "c:/Users/ANDREA/Dropbox/org/meditazioni.org")
+  (find-file (concat my-workspace-path "meditazioni.org"))
   (andrea-add-meditation-entry))
 
 (defun andrea-add-exercise-entry ()
@@ -222,72 +259,72 @@
 	      (list add-journal-function))))
 
 (defjournal andrea-open-meditation-journal
-  "c:/Users/ANDREA/Dropbox/org/meditazioni.org" 
+  (concat my-workspace-path "meditazioni.org" )
   "C-c M-m" 
   andrea-add-meditation-entry)
 
 (defjournal andrea-open-journal
-  "c:/Users/ANDREA/Dropbox/org/giornale.org" 
+  (concat my-workspace-path "giornale.org" )
   "C-c M-n" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-writing-journal
-  "c:/Users/ANDREA/Dropbox/org/giornale_scrittura.org" 
+  (concat my-workspace-path "giornale_scrittura.org" )
   "C-c M-z" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-earnings-journal
-  "c:/Users/ANDREA/Dropbox/org/guadagni.org" 
+  (concat my-workspace-path "guadagni.org" )
   "C-c M-g" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-dream-journal
-  "c:/Users/ANDREA/Dropbox/org/sogni.org" 
+  (concat my-workspace-path "sogni.org" )
   "C-c M-d" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-exercise-journal
-  "c:/Users/ANDREA/Dropbox/org/allenamento.org" 
+  (concat my-workspace-path "allenamento.org" )
   "C-c M-e" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-gratitude-journal
-  "c:/Users/ANDREA/Dropbox/org/gratitudine.org" 
+  (concat my-workspace-path "gratitudine.org" )
   "C-c M-r" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-sexuality-journal
-  "c:/Users/ANDREA/Dropbox/org/sexuality.org" 
+  (concat my-workspace-path "sexuality.org" )
   "C-c M-s" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-comedy-journal
-  "c:/Users/ANDREA/Dropbox/org/comedy.org" 
+  (concat my-workspace-path "comedy.org" )
   "C-c M-a" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-drawing-journal
-  "c:/Users/ANDREA/Dropbox/org/drawing.org" 
+  (concat my-workspace-path "drawing.org" )
   "C-c M-f" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-wakeup-journal
-  "c:/Users/ANDREA/Dropbox/org/wakeup.org" 
+  (concat my-workspace-path "wakeup.org" )
   "C-c M-k" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-ideas-journal
-  "c:/Users/ANDREA/Dropbox/org/ideas.org" 
+  (concat my-workspace-path "ideas.org" )
   "C-c M-i" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-forgive-journal
-  "c:/Users/ANDREA/Dropbox/org/forgive.org" 
+  (concat my-workspace-path "forgive.org" )
   "C-c M-v" 
   andrea-add-journal-entry)
 
 (defjournal andrea-open-morning-pages-journal
-  "c:/Users/ANDREA/Dropbox/org/morning_pages.org" 
+  (concat my-workspace-path "morning_pages.org" )
   "C-c M-p" 
   andrea-add-journal-entry)
 
@@ -296,11 +333,11 @@
   (interactive)
   (let ()
     (save-buffer)
-    (find-file "c:/Users/ANDREA/Dropbox/org/writepad.org")
+    (find-file (concat my-workspace-path "writepad.org"))
     (goto-char (point-max))
     (org-timer-start)))
 
-(global-set-key (kbd "C-c M-w") 'andrea-open-writepad)
+(global-set-key (kbd "C-c M-q") 'andrea-open-writepad)
 
 ;;; misc shortcuts
 (global-set-key (kbd "<f8>") 'calc)
@@ -317,17 +354,13 @@
 ;;; open init file
 (defun my-open-init ()
   (interactive)
-  (find-file "~\\.emacs.d\\init.el"))
+  (find-file "~/.emacs.d/init.el"))
 
 ;;; Haskell mode
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 ;;; Automatically load follow-mode
 (follow-mode 1)
-
-;;; expand-region
-(require 'expand-region)
-(global-set-key (kbd "C-M-'") 'er/expand-region)
 
 ;;; set default timer for org-timer
 (setq org-timer-default-timer 5)
@@ -464,7 +497,7 @@ elements in array"
 
 ;;; org-mode options
 (setq org-log-done 'time)
-(setq org-directory "C:\\Users\\ANDREA\\Dropbox\\org")
+(setq org-directory my-workspace-path)
 (setq org-export-html-validation-link nil)
 
 ;; ;;; Add an OPENED status to TODO stuff in org
@@ -497,9 +530,10 @@ elements in array"
 
 ;;; Run auto-fill-mode when entering org mode
 (add-hook 'org-mode-hook 'auto-fill-mode)
+(add-hook 'text-mode-hook 'auto-fill-mode)
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
 ;;; Initialize Haxe-mode
-(require 'haxe-mode)
+;;; (require 'haxe-mode)
