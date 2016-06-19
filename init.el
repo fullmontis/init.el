@@ -31,11 +31,6 @@
 ;;; Create key binding for auto fill mode
 (global-set-key (kbd "C-c q") 'auto-fill-mode)
 
-;;; start gpg service
-
-(require 'epa-file)
-(epa-file-enable)
-
 ;;; Set advice for creating directory when saving a new file if it
 ;;; does not exist
 
@@ -534,6 +529,3 @@ elements in array"
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
-
-;;; Initialize Haxe-mode
-;;; (require 'haxe-mode)
