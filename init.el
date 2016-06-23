@@ -57,6 +57,7 @@
 (tool-bar-mode 0)
 
 ;; set aliases for html mode
+(require 'nxml-mode)
 (fset 'html-mode 'nxml-mode)
 
 ;; Remove annoying closing of window when pressing C-z by mistake
@@ -463,8 +464,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Some custom functions for javascript
 ;;; use js2-mode for javascript files
-(fset 'javascript-mode 'js2-mode)
 (require 'js2-mode)
+(fset 'javascript-mode 'js2-mode)
 
 (defun andrea-js-insert-function (name arguments)
   "Adds simple function constructor for JS"
