@@ -130,8 +130,8 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; enable screenwriter mode
-(require 'screenwriter)
+;; enable screenplay mode
+(require 'screenplay)
 
 ;; Calendar function
 ;; (load "calendarpage.el")
@@ -377,31 +377,39 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; File editing
+(defun my-is-last-line ()
+  (if (> (+ 1 (line-end-position)) (point-max)) t))
+
 (defun andrea-move-line-above ()
-  "Moves current line above the upper one"
+  "Moves current line above the previous one"
   (interactive)
-  (let ((point-from-start (- (point) (line-beginning-position)))
-	(line (delete-and-extract-region 
-	       (line-beginning-position)
-	       (min (+ 1 (line-end-position)) (point-max)))))
-      (ignore-errors (previous-line))
-      (move-beginning-of-line nil)
-      (let ((line-start (point)))
-	(insert line)
-	(goto-char (+ line-start point-from-start)))))
+  (if (not (eq (line-number-at-pos) 1))
+      (let* ((point-from-start (- (point) (line-beginning-position)))
+	     (line (delete-and-extract-region
+		    (line-beginning-position)
+		    (line-end-position))))
+	(backward-delete-char 1 nil)
+	(move-beginning-of-line nil)
+	(newline)
+	(previous-line)
+	(let ((line-start (point)))
+	  (insert line)
+	  (goto-char (+ line-start point-from-start))))))
 
 (defun andrea-move-line-below ()
-  "Moves current line above the upper one"
+  "Moves current line below the next one"
   (interactive)
-  (let ((point-from-start (- (point) (line-beginning-position)))
-	(line (delete-and-extract-region 
-	       (line-beginning-position)
-	       (min (+ 1 (line-end-position)) (point-max)))))
-      (ignore-errors (next-line))
-      (move-beginning-of-line nil)
-      (let ((line-start (point)))
-	(insert line)
-	(goto-char (+ line-start point-from-start)))))
+  (if (not (my-is-last-line))
+      (let* ((point-from-start (- (point) (line-beginning-position)))
+	     (line (delete-and-extract-region
+		    (line-beginning-position)
+		    (line-end-position))))
+	(delete-forward-char 1 nil)
+	(move-end-of-line nil)
+	(newline)
+	(let ((line-start (point)))
+	  (insert line)
+	  (goto-char (+ line-start point-from-start))))))
 
 (global-set-key (kbd "M-<up>")   'andrea-move-line-above)
 (global-set-key (kbd "M-<down>") 'andrea-move-line-below)
