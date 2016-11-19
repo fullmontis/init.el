@@ -3,26 +3,20 @@
 
   (add-to-list 'package-archives
 	       '("melpa" . "http://melpa.milkbox.net/packages/") t)
-	       
-					; list the packages you want
   (setq package-list '(js2-mode))
-  
-					; activate all the packages
-					; (in particular autoloads)
   (package-initialize)
-
-					; fetch the list of packages available 
   (unless package-archive-contents
     (package-refresh-contents))
-  
-					; install the missing packages
   (dolist (package package-list)
     (unless (package-installed-p package)
       (package-install package))))
 
 (if (eq system-type 'gnu/linux)
-    (setq my-workspace-path "/home/andrea/Dropbox/org/")
-  (setq my-workspace-path "C:\\Users\\ANDREA\\Dropbox\\org\\"))
+    (progn
+      (setq my-workspace-path "/home/andrea/Dropbox/org/")
+      (setq org-agenda-files (list (concat my-workspace-path "agenda/agenda.org"))))
+  (setq my-workspace-path "C:\\Users\\ANDREA\\Dropbox\\org\\")
+  (setq org-agenda-files (list (concat my-workspace-path "agenda\\agenda.org"))))
 
 ;;; Start Emacs server
 (require 'server)
@@ -52,13 +46,26 @@
 (set-fringe-mode '(0 . 1))
 (follow-mode 1)
 
+;; Set text-mode as default for new buffers
+(setq default-major-mode 'text-mode)
+
 ;;; Remove toolbar and menu
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 
-;; set aliases for html mode
+;; use nxml-mode for html
+;;;###autoload
 (require 'nxml-mode)
 (fset 'html-mode 'nxml-mode)
+(fset 'xml-mode 'nxml-mode)
+(mapc
+ (lambda (pair)
+   (if (or (eq (cdr pair) 'xml-mode)
+	   (eq (cdr pair) 'sgml-mode)
+	   (eq (cdr pair) 'html-mode))
+       (setcdr pair 'nxml-mode)))
+ auto-mode-alist)
+
 
 ;; Remove annoying closing of window when pressing C-z by mistake
 ;; and use it for undo instead
@@ -66,7 +73,7 @@
 
 ;;; Setup sh in windows
 (if (eq system-type 'windows-nt)
-    (let () 
+    (progn
       (setq explicit-shell-file-name "C:/Program Files (x86)/Git/bin/sh.exe")
       (setq shell-file-name "sh")
       (setq explicit-sh.exe-args '("--login" "-i"))
@@ -78,25 +85,14 @@
 ;;; add folder from where load custom lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-;;; Set default package repositories
-;; (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-;;                          ("gnu" . "http://elpa.gnu.org/packages/")
-;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
-;; 			 ))
-
-;;; Start Evil mode by default
-; (package-initialize)
-; (evil-mode 0)
-
 ;;; Needed to be able to insert ascii characters in decimal with C-q
 (setq read-quoted-char-radix 10)
 
 ;;; Org mode
+;;;###autoload
 (require 'org-install)
+;;;###autoload
 (require 'org-habit)
-
-;; set org agenda files
-(setq org-agenda-files (list (concat my-workspace-path "agenda\\agenda.org")))
 
 ;;; Org mode keybindings.
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -113,6 +109,7 @@
 (column-number-mode 1)
 
 ;;; Enable Ren'Py mode
+;;;###autoload
 (require 'renpy)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -131,7 +128,7 @@
  )
 
 ;; enable screenplay mode
-(require 'screenplay)
+;; (require 'screenplay)
 
 ;; Calendar function
 ;; (load "calendarpage.el")
@@ -148,14 +145,15 @@
 ;;; inrease/decrease font size
 ;;(global-set-key (kbd "C-+") 'text-scale-increase)
 ;;(global-set-key (kbd "C--") 'text-scale-decrease)
-(global-set-key (kbd "C--") 'undo)
-(set-face-attribute 'default nil :height 100)
+
+;; Set inconsolata as default font
+(set-default-font "DejaVu Sans Mono-9")
 
 ;;; Search and replace, no query
 (global-set-key (kbd "C-%") 'replace-string)
 
 ;;; Show date on mode bar
-; (display-time-mode 1)
+;; (display-time-mode 0)
 ;; (custom-set-variables '(display-time-24hr-format 1)
 ;; 		      '(display-time-day-and-date 1))
 
@@ -183,8 +181,7 @@
     (setq exact 1))
   (nth (+ exact (* phase 2)) lunar-names)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Journaling function
+;;; Journaling functions
 
 (defun andrea-insert-timestamp-with-time ()
   "Add current timestamp at point"
@@ -325,10 +322,9 @@
   andrea-add-journal-entry)
 
 (defun andrea-open-writepad ()
-  "Automatically save current buffer, open writepad and go to the end of the file"
+  "Open writepad and go to the end of the file"
   (interactive)
   (let ()
-    (save-buffer)
     (find-file (concat my-workspace-path "writepad.org"))
     (goto-char (point-max))
     (org-timer-start)))
@@ -337,15 +333,14 @@
 
 ;;; misc shortcuts
 (global-set-key (kbd "<f8>") 'calc)
-;;(global-set-key (kbd "<f1>") 'shell)
+(global-set-key (kbd "<f1>") 'shell)
+(require 'dired-x)
+(setq-default dired-omit-files-p t)
+(setq-default dired-omit-files "^\\.?#\\|^\\.[^.]")
+(global-set-key (kbd "<f2>") (lambda () (interactive) (dired "~")))
 (global-set-key (kbd "<f12>") 
   (lambda()(interactive)                               
     (switch-to-buffer (get-buffer-create "*scratch*"))))
-(global-set-key (kbd "C-<home>") 'beginning-of-buffer)
-(global-set-key (kbd "C-<end>") 'end-of-buffer)
-
-;;; Use nxml for html
-(fset 'html-mode 'nxml-mode)
 
 ;;; open init file
 (defun my-open-init ()
@@ -372,10 +367,6 @@
 
 (global-set-key (kbd "C-c M-c") 'count-words-from-ampersand)
 
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; File editing
 (defun my-is-last-line ()
   (if (> (+ 1 (line-end-position)) (point-max)) t))
@@ -435,24 +426,7 @@
 
 (global-set-key (kbd "C-.") 'andrea-indent-curly-brackets)
 
-;;; A function to create a TOC and html body for an article 
-;; (defun my-make-toc (from to)
-;;   (interactive (if (use-region-p)
-;; 		   (list (region-beginning) (region-end))
-;; 		 (list (point-min) (point-max))))
-;;   (let ((article  (buffer-substring-no-properties from to)))
-;;     (switch-to-buffer (get-buffer-create (concat (buffer-name (current-buffer)) ".htm")))
-;;     (insert article)
-;;     (goto-char (point-max))
-;;     (search-backward "** ")
-;;     (delete-forward-char)(delete-forward-char)(delete-forward-char)
-;;     (let ((title (buffer-substring-no-properties (point) (line-end-position)))
-;; 	  (title-no-spaces (replace-regexp-in-string " " "-" title)))
-;;       (insert (concat "<a name=\"" title-no-spaces "\"></a>"))
-;;       (goto-char (point-min))
-;;       (insert (concat "<a href=\"#" title-no-spaces "\">" title "</a><br>"))
-;;       (goto-char (point-max)))))
-
+;;; Create toc for articles
 (defun my-make-toc ()
   (interactive)
   (goto-char (point-max))
@@ -465,13 +439,12 @@
     (goto-char (point-min))
     (insert (concat "<a href=\"#" title-no-spaces "\">" title "</a><br>"))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Elisp
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Some custom functions for javascript
 ;;; use js2-mode for javascript files
+;;;###autoload
 (require 'js2-mode)
 (fset 'javascript-mode 'js2-mode)
 
@@ -495,9 +468,6 @@ elements in array"
 
 (define-key js2-mode-map (kbd "C-,") 'andrea-js-insert-array-iterator)
 (define-key js2-mode-map (kbd "C-ò") 'andrea-js-insert-function)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Org-mode
 
 ;;; org-mode options
 (setq org-log-done 'time)
@@ -538,3 +508,23 @@ elements in array"
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+
+;; Setup the site org project
+;;;###autoload
+(require 'ox-publish)
+(setq org-publish-project-alist
+      '(("bomba-retorica"
+	 :base-directory "~/Dropbox/site"
+	 :base-extension "org"
+	 :publishing-directory "~/Dropbox/site/html-export"
+	 :recursive nil
+	 :drawers nil
+	 :creator-info nil
+	 :publishing-function org-html-publish-to-html
+	 :headline-levels 2
+	 :html-head nil
+	 :html-head-include-default-style nil
+	 :html-head-include-scripts nil
+	 :html-postamble nil
+	 :html-head "<link href=\"style.css\" rel=\"stylesheet\">\
+<link href=\"https://fonts.googleapis.com/css?family=Cousine|Goudy+Bookletter+1911\" rel=\"stylesheet\">" )))
