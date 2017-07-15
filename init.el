@@ -66,6 +66,14 @@
        (setcdr pair 'nxml-mode)))
  auto-mode-alist)
 
+;; Disable fringes by default
+(set-fringe-mode 0)
+
+(defun center-frame ()
+  (interactive)
+  (let ((fringe-size
+	 (/ (- (frame-pixel-width) 700) 2)))
+    (set-fringe-style `(,fringe-size . ,fringe-size))))
 
 ;; Remove annoying closing of window when pressing C-z by mistake
 ;; and use it for undo instead
@@ -84,6 +92,7 @@
 
 ;;; add folder from where load custom lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/.emacs.d/lisp/screenplay-mode/")
 
 ;;; Needed to be able to insert ascii characters in decimal with C-q
 (setq read-quoted-char-radix 10)
@@ -93,6 +102,10 @@
 (require 'org-install)
 ;;;###autoload
 (require 'org-habit)
+
+;;; Arduino files
+(add-to-list 'auto-mode-alist '("\\.ino\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.pde\\'" . c-mode))
 
 ;;; Org mode keybindings.
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -147,7 +160,7 @@
 ;;(global-set-key (kbd "C--") 'text-scale-decrease)
 
 ;; Set inconsolata as default font
-(set-default-font "DejaVu Sans Mono-9")
+(set-default-font "DejaVu Sans Mono-10")
 
 ;;; Search and replace, no query
 (global-set-key (kbd "C-%") 'replace-string)
