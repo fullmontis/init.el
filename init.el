@@ -69,11 +69,14 @@
 ;; Disable fringes by default
 (set-fringe-mode 0)
 
-(defun center-frame ()
-  (interactive)
-  (let ((fringe-size
-	 (/ (- (frame-pixel-width) 700) 2)))
-    (set-fringe-style `(,fringe-size . ,fringe-size))))
+;; Custom function to center current frame on screen by using fringes
+(defun center-frame (arg)
+  (interactive "P")
+  (if (not arg)
+      (let ((fringe-size
+	     (/ (- (frame-pixel-width) 700) 2)))
+	(set-fringe-style `(,fringe-size . ,fringe-size)))
+    (set-fringe-mode '(0 . 1))))
 
 ;; Remove annoying closing of window when pressing C-z by mistake
 ;; and use it for undo instead
@@ -141,7 +144,8 @@
  )
 
 ;; enable screenplay mode
-;; (require 'screenplay)
+;;;###autoload
+(require 'screenplay)
 
 ;; Calendar function
 ;; (load "calendarpage.el")
@@ -264,75 +268,75 @@
 	      (list 'find-file journal-path)
 	      (list add-journal-function))))
 
-(defjournal andrea-open-meditation-journal
-  (concat my-workspace-path "meditazioni.org" )
-  "C-c M-m" 
-  andrea-add-meditation-entry)
+;; (defjournal andrea-open-meditation-journal
+;;   (concat my-workspace-path "meditazioni.org" )
+;;   "C-c M-m" 
+;;   andrea-add-meditation-entry)
 
 (defjournal andrea-open-journal
   (concat my-workspace-path "giornale.org" )
   "C-c M-n" 
   andrea-add-journal-entry)
 
-(defjournal andrea-open-writing-journal
-  (concat my-workspace-path "giornale_scrittura.org" )
-  "C-c M-z" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-writing-journal
+;;   (concat my-workspace-path "giornale_scrittura.org" )
+;;   "C-c M-z" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-earnings-journal
-  (concat my-workspace-path "guadagni.org" )
-  "C-c M-g" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-earnings-journal
+;;   (concat my-workspace-path "guadagni.org" )
+;;   "C-c M-g" 
+;;   andrea-add-journal-entry)
 
 (defjournal andrea-open-dream-journal
   (concat my-workspace-path "sogni.org" )
   "C-c M-d" 
   andrea-add-journal-entry)
 
-(defjournal andrea-open-exercise-journal
-  (concat my-workspace-path "allenamento.org" )
-  "C-c M-e" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-exercise-journal
+;;   (concat my-workspace-path "allenamento.org" )
+;;   "C-c M-e" 
+;;   andrea-add-journal-entry)
 
 (defjournal andrea-open-gratitude-journal
   (concat my-workspace-path "gratitudine.org" )
   "C-c M-r" 
   andrea-add-journal-entry)
 
-(defjournal andrea-open-sexuality-journal
-  (concat my-workspace-path "sexuality.org" )
-  "C-c M-s" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-sexuality-journal
+;;   (concat my-workspace-path "sexuality.org" )
+;;   "C-c M-s" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-comedy-journal
-  (concat my-workspace-path "comedy.org" )
-  "C-c M-a" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-comedy-journal
+;;   (concat my-workspace-path "comedy.org" )
+;;   "C-c M-a" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-drawing-journal
-  (concat my-workspace-path "drawing.org" )
-  "C-c M-f" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-drawing-journal
+;;   (concat my-workspace-path "drawing.org" )
+;;   "C-c M-f" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-wakeup-journal
-  (concat my-workspace-path "wakeup.org" )
-  "C-c M-k" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-wakeup-journal
+;;   (concat my-workspace-path "wakeup.org" )
+;;   "C-c M-k" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-ideas-journal
-  (concat my-workspace-path "ideas.org" )
-  "C-c M-i" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-ideas-journal
+;;   (concat my-workspace-path "ideas.org" )
+;;   "C-c M-i" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-forgive-journal
-  (concat my-workspace-path "forgive.org" )
-  "C-c M-v" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-forgive-journal
+;;   (concat my-workspace-path "forgive.org" )
+;;   "C-c M-v" 
+;;   andrea-add-journal-entry)
 
-(defjournal andrea-open-morning-pages-journal
-  (concat my-workspace-path "morning_pages.org" )
-  "C-c M-p" 
-  andrea-add-journal-entry)
+;; (defjournal andrea-open-morning-pages-journal
+;;   (concat my-workspace-path "morning_pages.org" )
+;;   "C-c M-p" 
+;;   andrea-add-journal-entry)
 
 (defun andrea-open-writepad ()
   "Open writepad and go to the end of the file"
@@ -541,3 +545,7 @@ elements in array"
 	 :html-postamble nil
 	 :html-head "<link href=\"style.css\" rel=\"stylesheet\">\
 <link href=\"https://fonts.googleapis.com/css?family=Cousine|Goudy+Bookletter+1911\" rel=\"stylesheet\">" )))
+
+;; Macro to change a script into functions for the game.
+(fset 'visualnovel-make-script
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([1 115 97 121 40 34 19 58 32 right left backspace backspace 34 44 32 34 5 34 41 44 down] 0 "%d")) arg)))
