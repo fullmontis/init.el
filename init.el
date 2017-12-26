@@ -1,6 +1,5 @@
 (when (>= emacs-major-version 24)
   (require 'package)
-
   (add-to-list 'package-archives
 	       '("melpa" . "http://melpa.milkbox.net/packages/") t)
   (setq package-list '(js2-mode))
@@ -66,17 +65,24 @@
        (setcdr pair 'nxml-mode)))
  auto-mode-alist)
 
-;; Disable fringes by default
-(set-fringe-mode 0)
-
 ;; Custom function to center current frame on screen by using fringes
+(setq fringe-default-color (face-attribute 'fringe :background))
+
 (defun center-frame (arg)
   (interactive "P")
   (if (not arg)
       (let ((fringe-size
 	     (/ (- (frame-pixel-width) 700) 2)))
-	(set-fringe-style `(,fringe-size . ,fringe-size)))
-    (set-fringe-mode '(0 . 1))))
+	(set-fringe-style `(,fringe-size . ,fringe-size))
+	(set-face-attribute 'fringe nil
+                      :foreground (face-foreground 'default)
+                      :background (face-background 'default)))
+    (progn
+      (set-fringe-mode '(0 . 1))
+      (set-face-attribute 'fringe nil
+			  :foreground (face-foreground 'default)
+			  :background fringe-default-color)
+    )))
 
 ;; Remove annoying closing of window when pressing C-z by mistake
 ;; and use it for undo instead
@@ -160,8 +166,8 @@
 (add-hook 'dired-mode-hook 'auto-revert-mode)
 
 ;;; inrease/decrease font size
-;;(global-set-key (kbd "C-+") 'text-scale-increase)
-;;(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
 
 ;; Set inconsolata as default font
 (set-default-font "DejaVu Sans Mono-10")
@@ -430,19 +436,6 @@
 			       (move-end-of-line nil)
 			       (newline-and-indent)))
 
-;;; Programming utility keystrokes
-(defun andrea-indent-curly-brackets ()
-  "Automatically insert curly brackets, and format them"
-  (interactive)
-  (insert "{")
-  (newline)(newline)
-  (insert "}")
-  (indent-for-tab-command)
-  (previous-line)
-  (indent-for-tab-command))
-
-(global-set-key (kbd "C-.") 'andrea-indent-curly-brackets)
-
 ;;; Create toc for articles
 (defun my-make-toc ()
   (interactive)
@@ -465,26 +458,18 @@
 (require 'js2-mode)
 (fset 'javascript-mode 'js2-mode)
 
-(defun andrea-js-insert-function (name arguments)
-  "Adds simple function constructor for JS"
-  (interactive (list (read-string "Function name: ")
-		     (read-string "Arguments: ")))
-  (let ((parleft  (if (string-equal arguments "") "(" "( "))
-	(parright (if (string-equal arguments "") ")" " )")))
-    (insert (concat "function " name  parleft  arguments parright " {}"))
-    (andrea-indent-brackets)))
+(fset 'js-insert-loop
+      [tab ?f ?o ?r ?\( ?  ?v ?a ?r ?  ?i ?= ?0 ?\; ?  ?i ?< ?\; ?  ?i ?+ ?+ ?  ?\) ?  ?\{ return return tab ?\} tab up tab])
 
-(defun andrea-js-insert-array-iterator (var array)
-  "Inserts a JS for loop that loops through all the existing 
-elements in array"
-  (interactive (list (read-string "Var name (default i): ")
-		     (read-string "Array: ")))
-  (let ((var (if (string-equal var "") "i" var)))
-    (insert "for( var " var "=0; " var "<" array ".length; " var "++ ) {}")
-    (andrea-indent-brackets)))
+(fset 'js-insert-brackets
+   [?\{ return return ?\} tab up tab])
 
-(define-key js2-mode-map (kbd "C-,") 'andrea-js-insert-array-iterator)
-(define-key js2-mode-map (kbd "C-ò") 'andrea-js-insert-function)
+(fset 'js-insert-function
+   [tab ?f ?u ?n ?c ?t ?i ?o ?n ?  ?\( ?\) ?  ?\{ return return ?\} up down tab up tab])
+
+(define-key js2-mode-map (kbd "C-.") 'js-insert-brackets)
+(define-key js2-mode-map (kbd "C-,") 'js-insert-loop)
+(define-key js2-mode-map (kbd "C-ò") 'js-insert-function)
 
 ;;; org-mode options
 (setq org-log-done 'time)
@@ -547,5 +532,42 @@ elements in array"
 <link href=\"https://fonts.googleapis.com/css?family=Cousine|Goudy+Bookletter+1911\" rel=\"stylesheet\">" )))
 
 ;; Macro to change a script into functions for the game.
-(fset 'visualnovel-make-script
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([1 115 97 121 40 34 19 58 32 right left backspace backspace 34 44 32 34 5 34 41 44 down] 0 "%d")) arg)))
+(fset 'vn-make-script
+      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([1 115 97 121 40 34 19 58 32 right left backspace backspace 34 44 32 34 5 34 41 44 down] 0 "%d")) arg)))
+
+(fset 'vn-insert-branch
+      [?\C-e return ?: ?  ?c ?o ?n ?n ?e ?c ?t ?\( ?\[ return ?\] ?\) ?, tab ?\C-r ?: right left])
+(fset 'vn-close-branch
+      [?\C-e return tab ?\] ?\) ?, return ?: ?  ?c ?o ?n ?n ?e ?c ?t ?\( ?\[ tab ?\M-m])
+(fset 'vn-insert-say
+      [?\C-e return ?s ?a ?y tab ?\( ?n ?, ?  ?_ ?\( ?\" ?\" ?\) ?\) ?, left left left left])
+(fset 'vn-insert-translation
+      [?\C-s ?\" left ?_ ?\( ?\C-s ?\C-s ?\C-s return ?\)])
+(fset 'vn-insert-menu
+      [?\C-e return ?m ?e ?n ?u ?b ?o ?x ?\( ?\[ return return ?\] ?\) ?, tab up tab ?\{ ?t ?e ?x ?t ?: ?  ?" ?" ?, ?  ?a ?c ?t ?i ?o ?n ?: ?  ?\} ?, return tab ?\{ ?t ?e ?x ?t ?: ?, ?  ?a ?c ?t ?i ?o ?n ?: ?  ?\} ?\C-r ?t ?e ?x ?t ?: right right right right right ?  ?\" ?\" left])
+(fset 'vn-insert-menu-button
+   [?\C-e return ?\{ tab ?t ?e ?x ?t ?: ?  ?\" ?\" ?, ?  ?a ?c ?t ?i ?o ?n ?: ?  ?, ?  ?y ?: ?  ?\} ?, ?\C-r ?\" return])
+
+(define-minor-mode vn-mode
+  "Minor mode for editing scripts made for visualplay"
+  :lighter " vn"
+  :keymap (let ((map (make-sparse-keymap)))
+	    ;(define-key map (kbd "C-à") 'vn-make-script)
+	    (define-key map (kbd "C-à") 'vn-insert-branch)
+	    (define-key map (kbd "M-à") 'vn-close-branch)
+	    (define-key map (kbd "C-è") 'vn-insert-menu)
+	    (define-key map (kbd "M-è") 'vn-insert-menu-button)
+	    (define-key map (kbd "C-ù") 'vn-insert-say)
+	    (define-key map (kbd "M-ù") 'vn-insert-translation)
+	    map))
+
+;; hide temporarily the mode line
+
+(defun toggle-mode-line () "toggles the modeline on and off"
+  (interactive) 
+  (setq mode-line-format
+    (if (equal mode-line-format nil)
+        (default-value 'mode-line-format)) )
+  (redraw-display))
+
+(global-set-key (kbd "<f10>") 'toggle-mode-line)
