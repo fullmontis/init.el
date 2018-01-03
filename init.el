@@ -66,7 +66,7 @@
  auto-mode-alist)
 
 ;; Custom function to center current frame on screen by using fringes
-(setq fringe-default-color (face-attribute 'fringe :background))
+(setq my-fringe-default-color (face-attribute 'fringe :background))
 
 (defun center-frame (arg)
   (interactive "P")
@@ -81,7 +81,7 @@
       (set-fringe-mode '(0 . 1))
       (set-face-attribute 'fringe nil
 			  :foreground (face-foreground 'default)
-			  :background fringe-default-color)
+			  :background my-fringe-default-color)
     )))
 
 ;; Remove annoying closing of window when pressing C-z by mistake
@@ -97,7 +97,7 @@
       (setenv "SHELL" shell-file-name)
       (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)
       )
-  )
+  )1
 
 ;;; add folder from where load custom lisp files
 (add-to-list 'load-path "~/.emacs.d/lisp/")
@@ -270,79 +270,26 @@
 		      journal-path 
 		      key-combination 
 		      add-journal-function)
-	(list 'global-set-key (list 'kbd key-combination) (list 'defun function-name '() (list 'interactive) 
+  (list 'global-set-key (list 'kbd key-combination)
+	(list 'defun function-name '(arg)
+	      (list 'interactive '"P") 
 	      (list 'find-file journal-path)
-	      (list add-journal-function))))
-
-;; (defjournal andrea-open-meditation-journal
-;;   (concat my-workspace-path "meditazioni.org" )
-;;   "C-c M-m" 
-;;   andrea-add-meditation-entry)
+	      (list 'if 'arg '(end-of-buffer) (list add-journal-function)))))
 
 (defjournal andrea-open-journal
   (concat my-workspace-path "giornale.org" )
   "C-c M-n" 
   andrea-add-journal-entry)
 
-;; (defjournal andrea-open-writing-journal
-;;   (concat my-workspace-path "giornale_scrittura.org" )
-;;   "C-c M-z" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-earnings-journal
-;;   (concat my-workspace-path "guadagni.org" )
-;;   "C-c M-g" 
-;;   andrea-add-journal-entry)
-
 (defjournal andrea-open-dream-journal
   (concat my-workspace-path "sogni.org" )
   "C-c M-d" 
   andrea-add-journal-entry)
 
-;; (defjournal andrea-open-exercise-journal
-;;   (concat my-workspace-path "allenamento.org" )
-;;   "C-c M-e" 
-;;   andrea-add-journal-entry)
-
-(defjournal andrea-open-gratitude-journal
-  (concat my-workspace-path "gratitudine.org" )
-  "C-c M-r" 
-  andrea-add-journal-entry)
-
-;; (defjournal andrea-open-sexuality-journal
-;;   (concat my-workspace-path "sexuality.org" )
-;;   "C-c M-s" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-comedy-journal
-;;   (concat my-workspace-path "comedy.org" )
-;;   "C-c M-a" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-drawing-journal
-;;   (concat my-workspace-path "drawing.org" )
-;;   "C-c M-f" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-wakeup-journal
-;;   (concat my-workspace-path "wakeup.org" )
-;;   "C-c M-k" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-ideas-journal
-;;   (concat my-workspace-path "ideas.org" )
-;;   "C-c M-i" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-forgive-journal
-;;   (concat my-workspace-path "forgive.org" )
-;;   "C-c M-v" 
-;;   andrea-add-journal-entry)
-
-;; (defjournal andrea-open-morning-pages-journal
-;;   (concat my-workspace-path "morning_pages.org" )
-;;   "C-c M-p" 
-;;   andrea-add-journal-entry)
+(defjournal andrea-open-books 
+  (concat my-workspace-path "libri.org")
+  "C-c M-l"
+  end-of-buffer)
 
 (defun andrea-open-writepad ()
   "Open writepad and go to the end of the file"
@@ -380,7 +327,6 @@
 (setq org-timer-default-timer 5)
 
 ;;; Word count function
-
 (defun count-words-from-ampersand () 
   (interactive)
   (save-excursion
@@ -476,34 +422,6 @@
 (setq org-directory my-workspace-path)
 (setq org-export-html-validation-link nil)
 
-;; ;;; Add an OPENED status to TODO stuff in org
-;; ;;; (still buggy as hell)
-;; (defcustom org-opened-string "OPENED:"
-;;   "String used as the prefix for timestamps logging opening a TODO entry"
-;;   :group 'org-keywords
-;;   :type 'string)
-
-;; (defun my-org-insert-opened ()
-;;   "Insert an inactive timestamp with opened state to current element"
-;;   (if (string= "TODO" org-state)
-;;       (save-excursion
-;; 	(org-back-to-heading)
-;; 	(org-show-entry)
-;; 	(end-of-line)
-;; 	(if (looking-at "\\<OPENED: *\\[\\([^]]+\\)\\]")
-;; 	    (let () (next-line 1)
-;; 	    (kill-whole-line)
-;; 	    (previous-line 1)
-;; 	    (end-of-line)
-;; 	    )
-;; 	  )
-;; 	(org-insert-time-stamp (current-time) t t "\n OPENED: ")
-;; 	(indent-for-tab-command)
-;; 	)
-;;     )
-;; )
-;; (add-hook 'org-after-todo-state-change-hook 'my-org-insert-opened)
-
 ;;; Run auto-fill-mode when entering org mode
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (add-hook 'text-mode-hook 'auto-fill-mode)
@@ -571,3 +489,4 @@
   (redraw-display))
 
 (global-set-key (kbd "<f10>") 'toggle-mode-line)
+(global-set-key (kbd "<f9>") 'center-frame)
