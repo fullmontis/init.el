@@ -246,7 +246,10 @@
   (interactive)
   (find-file (concat my-workspace-path "meditazioni.org"))
   (andrea-add-meditation-entry))
-
+(defun andrea-open-acquisti () 
+  (interactive)
+  (find-file (concat my-workspace-path "acquisti.org")))
+(global-set-key (kbd "C-c M-a") 'andrea-open-acquisti)
 (defun andrea-add-exercise-entry ()
   "Insert journaling entry for exercise at the end of the current file."
   (interactive)
@@ -450,6 +453,7 @@
 <link href=\"https://fonts.googleapis.com/css?family=Cousine|Goudy+Bookletter+1911\" rel=\"stylesheet\">" )))
 
 ;; Macro to change a script into functions for the game.
+;; useless now for the most part since the engine didn't get developed further
 (fset 'vn-make-script
       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([1 115 97 121 40 34 19 58 32 right left backspace backspace 34 44 32 34 5 34 41 44 down] 0 "%d")) arg)))
 
@@ -466,7 +470,7 @@
 (fset 'vn-insert-menu-button
    [?\C-e return ?\{ tab ?t ?e ?x ?t ?: ?  ?\" ?\" ?, ?  ?a ?c ?t ?i ?o ?n ?: ?  ?, ?  ?y ?: ?  ?\} ?, ?\C-r ?\" return])
 
-(define-minor-mode vn-mode
+(define-minor-mode vn-old-mode
   "Minor mode for editing scripts made for visualplay"
   :lighter " vn"
   :keymap (let ((map (make-sparse-keymap)))
@@ -490,3 +494,40 @@
 
 (global-set-key (kbd "<f10>") 'toggle-mode-line)
 (global-set-key (kbd "<f9>") 'center-frame)
+
+;; for remapping alt to meta on mechanical keyboard
+(setq x-alt-keysym 'meta)
+
+(defun my-org-insert-inactive-timestamp (arg)
+  (interactive "P")
+  (if arg
+      (insert (format-time-string "[%Y-%m-%d %a %H:%M]"))
+    (insert (format-time-string "[%Y-%m-%d %a]"))))
+  
+;; useful functions for renpy
+
+(fset 'vn-convert-script
+      [?\C-a ?\C-s ?- left delete ?  ?\" ?\C-e ?\" ?\C-a tab down])
+(fset 'vn-insert-char
+      [?s ?h ?o ?w ?  ?  ?a ?t left left left tab])
+
+(define-minor-mode vn-mode
+  "Minor mode for editing scripts made for visualplay"
+  :lighter " vn"
+  :keymap (let ((map (make-sparse-keymap)))
+	    (define-key map (kbd "C-à") 'vn-convert-script)
+	    (define-key map (kbd "C-ò") 'vn-insert-char)
+	    map))
+
+(defun reading-mode (arg)
+  (interactive "P")
+  (if (not arg)
+      (progn
+	(delete-other-windows)
+	(split-window-right)
+	(split-window-right)
+	(balance-windows)
+	(follow-mode 1))
+    (progn
+      (delete-other-windows)
+      (follow-mode -1))))
