@@ -531,3 +531,60 @@
     (progn
       (delete-other-windows)
       (follow-mode -1))))
+
+;;;
+;;; Narrow page-mode for navigating pages
+
+(defun narrow-previous-page () (interactive)
+       (narrow-to-page -1) (goto-char (point-min)))
+(defun narrow-next-page () (interactive)
+       (narrow-to-page 1) (goto-char (point-min)))
+
+(defun my-current-page-number ()
+  "Return current page number in document"
+  (interactive)
+  (save-restriction
+    (widen)
+    (save-excursion
+      (let ((count 1)
+	    (opoint (point)))
+	(goto-char (point-min))
+	(while (re-search-forward page-delimiter opoint t)
+          (if (= (match-beginning 0) (match-end 0))
+              (forward-char 1))
+	  (setq count (1+ count)))
+	count))))
+
+(defun my-total-page-number ()
+  "Return total page number in document"
+  (interactive)
+  (save-restriction
+    (widen)
+    (save-excursion
+      (let ((count 1))
+	(goto-char (point-min))
+	(while (re-search-forward page-delimiter nil t)
+          (if (= (match-beginning 0) (match-end 0))
+              (forward-char 1))
+	  (setq count (1+ count)))
+	count))))
+
+;; (defun my-show-page-position ()
+;;   "Show page position in current document against total page number"
+;;   (interactive)
+;;   (message "%d/%d" (my-current-page-number) (my-total-page-number)))
+
+(defun page-update ()
+  (interactive)
+  (widen)
+  (narrow-to-page))
+
+(define-minor-mode page-mode
+  "Minor mode for visualizing text as pages"
+  :lighter (:eval (format " %d/%d" (my-current-page-number) (my-total-page-number)))
+  :keymap (let ((map (make-sparse-keymap)))
+	    (define-key map (kbd "C-ò") 'page-update)
+	    (define-key map (kbd "M-p") 'narrow-previous-page)
+	    (define-key map (kbd "M-n") 'narrow-next-page)
+	    map))
+(add-hook 'page-mode-hook 'narrow-to-page)
