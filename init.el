@@ -313,7 +313,8 @@
 (global-set-key (kbd "<f2>") (lambda () (interactive) (dired "~")))
 (global-set-key (kbd "<f12>") 
   (lambda()(interactive)                               
-    (switch-to-buffer (get-buffer-create "*scratch*"))))
+    (switch-to-buffer (get-buffer-create "*scratch*"))
+    (text-mode)))
 
 ;;; open init file
 (defun my-open-init ()
@@ -337,7 +338,7 @@
       (search-backward "&")
       (message (number-to-string (count-words-region (point) p))))))
 
-(global-set-key (kbd "C-c M-c") 'count-words-from-ampersand)
+(global-set-key (kbd "C-c c") 'count-words-from-ampersand) 
 
 ;;; File editing
 (defun my-is-last-line ()
@@ -588,3 +589,10 @@
 	    (define-key map (kbd "M-n") 'narrow-next-page)
 	    map))
 (add-hook 'page-mode-hook 'narrow-to-page)
+
+;;;
+
+(defun my-send-to-printer ()
+  "Send current file to printer"
+  (interactive)
+  (shell-command (concat "~/Dropbox/scripts/lprformat.sh " (buffer-file-name))))
