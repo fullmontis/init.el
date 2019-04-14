@@ -246,10 +246,12 @@
   (interactive)
   (find-file (concat my-workspace-path "meditazioni.org"))
   (andrea-add-meditation-entry))
+
 (defun andrea-open-acquisti () 
   (interactive)
   (find-file (concat my-workspace-path "acquisti.org")))
 (global-set-key (kbd "C-c M-a") 'andrea-open-acquisti)
+
 (defun andrea-add-exercise-entry ()
   "Insert journaling entry for exercise at the end of the current file."
   (interactive)
@@ -294,15 +296,27 @@
   "C-c M-l"
   end-of-buffer)
 
+(defjournal andrea-open-slipbox 
+  (concat my-workspace-path "slipbox.org")
+  "C-c M-s"
+  end-of-buffer)
+
+(defjournal andrea-open-plan 
+  (concat my-workspace-path "plan.org")
+  "C-c M-p"
+  end-of-buffer)
+
 (defun andrea-open-writepad ()
   "Open writepad and go to the end of the file"
   (interactive)
   (let ()
     (find-file (concat my-workspace-path "writepad.org"))
-    (goto-char (point-max))
-    (org-timer-start)))
+    (goto-char (point-max))))
+    ;(org-timer-start)))
 
 (global-set-key (kbd "C-c M-q") 'andrea-open-writepad)
+
+(global-set-key (kbd "C-c C-'") 'org-toggle-link-display)
 
 ;;; misc shortcuts
 (global-set-key (kbd "<f8>") 'calc)
@@ -505,21 +519,6 @@
       (insert (format-time-string "[%Y-%m-%d %a %H:%M]"))
     (insert (format-time-string "[%Y-%m-%d %a]"))))
   
-;; useful functions for renpy
-
-(fset 'vn-convert-script
-      [?\C-a ?\C-s ?- left delete ?  ?\" ?\C-e ?\" ?\C-a tab down])
-(fset 'vn-insert-char
-      [?s ?h ?o ?w ?  ?  ?a ?t left left left tab])
-
-(define-minor-mode vn-mode
-  "Minor mode for editing scripts made for visualplay"
-  :lighter " vn"
-  :keymap (let ((map (make-sparse-keymap)))
-	    (define-key map (kbd "C-à") 'vn-convert-script)
-	    (define-key map (kbd "C-ò") 'vn-insert-char)
-	    map))
-
 (defun reading-mode (arg)
   (interactive "P")
   (if (not arg)
@@ -592,7 +591,62 @@
 
 ;;;
 
-(defun my-send-to-printer ()
-  "Send current file to printer"
+;; (defun my-send-to-printer ()
+;;   "Send current file to printer"
+;;   (interactive)
+;;   (if (buffer-file-name)
+;;       (shell-command (concat "~/Dropbox/scripts/lprformat.sh " (concat "\"" (buffer-file-name) "\"")))))
+
+;; useful functions for renpy
+
+(fset 'vn-convert-script
+      [?\C-a ?\C-s ?- left delete ?  ?\" ?\C-e ?\" ?\C-a tab down])
+(fset 'vn-insert-char
+      [?s ?h ?o ?w ?  ?  ?a ?t left left left tab])
+
+;; (define-minor-mode vn-mode
+;;   "Minor mode for editing scripts made for visualplay"
+;;   :lighter " vn"
+;;   :keymap (let ((map (make-sparse-keymap)))
+;; 	    (define-key map (kbd "C-à") 'vn-convert-script)
+;; 	    (define-key map (kbd "C-ò") 'vn-insert-char)
+;; 	    map))
+
+;;; lily functions
+
+(defun my-open-lily ()
   (interactive)
-  (shell-command (concat "~/Dropbox/scripts/lprformat.sh " (buffer-file-name))))
+  (find-file "~/progetti/Creepy Lily/game/script.rpy"))
+
+(fset 'my-insert-derek-char
+      [?\C-e return tab ?s ?h ?o ?w ?  ?d ?e ?r ?e ?k ?  ?b tab return
+	  ?w ?i ?t ?h ?  ?D ?i ?s ?s ?o ?l ?v ?e ?\( ?0 ?. ?2 ?\) tab up ?\C-e])
+(fset 'my-insert-lily-char
+      [?\C-e return tab ?s ?h ?o ?w ?  ?l ?i ?l ?y ?  ?b tab return
+	  ?w ?i ?t ?h ?  ?D ?i ?s ?s ?o ?l ?v ?e ?\( ?0 ?. ?2 ?\) tab up ?\C-e])
+;; (global-set-key (kbd "C-,") 'my-insert-derek-char)
+;; (global-set-key (kbd "C-.") 'my-insert-lily-char)
+
+;; open script for editing
+
+(defun my-open-script ()
+  (interactive)
+  (delete-other-windows)
+(split-window-right)
+(other-window 1)
+(find-file "~/progetti/Creepy Lily/game/script.rpy")
+(beginning-of-buffer)
+(search-forward "\*\*\*")
+(recenter-top-bottom 0)
+(other-window 1)
+(find-file "~/progetti/Creepy Lily/game/scriptnew.txt")
+(end-of-buffer)
+(auto-fill-mode -1))
+
+(global-set-key (kbd "C-c M-m") 'my-open-script)
+
+(defun my-gen-html()
+  (interactive)
+  (let ((string (buffer-substring-no-properties (mark) (point))))
+    (delete-region (mark) (point))
+  (insert (shell-command-to-string (concat "echo \"" string "\" | pandoc | sed 's|<p>|\\n<p>|g'")))))
