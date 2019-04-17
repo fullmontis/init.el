@@ -271,6 +271,20 @@
   (insert "* ")
   (andrea-insert-timestamp)(newline))
 
+(defun my-goto-last-entry ()
+  (interactive)
+  (end-of-buffer)
+  (search-backward "* ")
+  (org-cycle)
+  (end-of-buffer)
+  )
+
+(defun my-is-line-empty ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (looking-at "[[:space:]]*$")))
+
 (defmacro defjournal (function-name 
 		      journal-path 
 		      key-combination 
@@ -279,7 +293,7 @@
 	(list 'defun function-name '(arg)
 	      (list 'interactive '"P") 
 	      (list 'find-file journal-path)
-	      (list 'if 'arg '(end-of-buffer) (list add-journal-function)))))
+	      (list 'if 'arg '(my-goto-last-entry) (list add-journal-function)))))
 
 (defjournal andrea-open-journal
   (concat my-workspace-path "giornale.org" )
@@ -305,6 +319,11 @@
   (concat my-workspace-path "plan.org")
   "C-c M-p"
   end-of-buffer)
+
+(defjournal andrea-open-palestra 
+  (concat my-workspace-path "palestra.org")
+  "C-c M-k"
+  (lambda () (end-of-buffer) (if (not (my-is-line-empty)) (newline)) (insert (format-time-string "%Y-%m-%d") " ")))
 
 (defun andrea-open-writepad ()
   "Open writepad and go to the end of the file"
@@ -639,7 +658,7 @@
 (search-forward "\*\*\*")
 (recenter-top-bottom 0)
 (other-window 1)
-(find-file "~/progetti/Creepy Lily/game/scriptnew.txt")
+(find-file "~/progetti/Creepy Lily/game/scriptnew2.txt")
 (end-of-buffer)
 (auto-fill-mode -1))
 
